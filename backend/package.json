@@ -33,7 +33,11 @@
     "test:opportunities": "jest --config apps/opportunity-service/jest.config.js",
     "opp:migrate": "node node_modules/typeorm/cli-ts-node-commonjs.js migration:run -d apps/opportunity-service/src/database/data-source.ts",
     "opp:migrate:revert": "node node_modules/typeorm/cli-ts-node-commonjs.js migration:revert -d apps/opportunity-service/src/database/data-source.ts",
-    "opp:migrate:show": "node node_modules/typeorm/cli-ts-node-commonjs.js migration:show -d apps/opportunity-service/src/database/data-source.ts"
+    "opp:migrate:show": "node node_modules/typeorm/cli-ts-node-commonjs.js migration:show -d apps/opportunity-service/src/database/data-source.ts",
+    "test:assignments": "jest --config apps/assignment-service/jest.config.js",
+    "asg:migrate": "node node_modules/typeorm/cli-ts-node-commonjs.js migration:run -d apps/assignment-service/src/database/data-source.ts",
+    "asg:migrate:revert": "node node_modules/typeorm/cli-ts-node-commonjs.js migration:revert -d apps/assignment-service/src/database/data-source.ts",
+    "asg:migrate:show": "node node_modules/typeorm/cli-ts-node-commonjs.js migration:show -d apps/assignment-service/src/database/data-source.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1172.0",
