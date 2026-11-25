@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
     ports: ["6379:6379"]
   minio:
-    image: minio/minio:latest
+    image: alpine/minio:RELEASE.2025-10-15T17-29-55Z
     container_name: dealplus-minio
     command: server /data --console-address ":9001"
     environment:
