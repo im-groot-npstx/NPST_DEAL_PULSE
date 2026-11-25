@@ -1,0 +1,71 @@
+name: Release @dealplus/document-client
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Semantic version to publish (e.g. 1.0.1)'
+        required: true
+        type: string
+  push:
+    tags:
+      - 'document-client-v*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/document-client
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: https://npm.pkg.github.com
+          scope: '@dealplus'
+          cache: npm
+          cache-dependency-path: packages/document-client/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      - name: Resolve package version from tag
+        if: startsWith(github.ref, 'refs/tags/document-client-v')
+        id: tag_version
+        run: |
+          VERSION="${GITHUB_REF_NAME#document-client-v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Apply workflow_dispatch version
+        if: github.event_name == 'workflow_dispatch'
+        run: npm version "${{ inputs.version }}" --no-git-tag-version
+
+      - name: Apply tag version
+        if: startsWith(github.ref, 'refs/tags/document-client-v')
+        run: npm version "${{ steps.tag_version.outputs.version }}" --no-git-tag-version
+
+      - name: Publish to GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm publish
+
+      - name: Publishing note
+        run: |
+          echo "Published @dealplus/document-client"
+          echo "Consumers must configure @dealplus registry and NODE_AUTH_TOKEN with read:packages"

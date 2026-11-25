@@ -1,0 +1,11 @@
+ 
+# Local dependencies and build output
+node_modules/
+dist/
+*.tsbuildinfo
+ 
+# Environment and database certificates
+.env
+.env.*
+!.env.example
+ca.pem

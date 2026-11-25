@@ -1,0 +1,3 @@
+# Copy to .npmrc (local) or configure in CI — never commit tokens.
+@dealplus:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}

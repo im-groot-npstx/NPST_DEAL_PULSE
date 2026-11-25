@@ -1,4 +1,5 @@
 node_modules/
+**/node_modules/
 dist/
 build/
 coverage/
@@ -24,6 +25,7 @@ temp/
 credentials/
 
 *.log
+logs/
 npm-debug.log*
 yarn-error.log*
 pnpm-debug.log*
@@ -34,3 +36,6 @@ Thumbs.db
 .vscode/
 .cursor/
 .husky/_/
+
+Opportunity Fields.xlsx
+Opportunity Information.docx

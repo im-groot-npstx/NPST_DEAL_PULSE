@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": false,
-    "outDir": "../../dist/apps/lead-service"
+    "outDir": "../../dist/apps/lead-service",
+    "rootDir": "src"
   },
   "include": [
     "src/**/*.ts"
