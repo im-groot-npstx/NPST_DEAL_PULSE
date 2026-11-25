@@ -40,9 +40,12 @@ export class ApprovalConfigService {
   }
 
   private validateTokenSecret(): void {
-    if (this.production && process.env['APPROVAL_MOCK_TOKEN_SECRET'] === undefined) {
-      throw configurationError('Production requires APPROVAL_MOCK_TOKEN_SECRET');
+    if (!this.production) {
+      return;
     }
+    throw configurationError(
+      'Production requires Gateway JWT/M365 identity; mock token authentication is not permitted',
+    );
   }
 
   private readPositiveInteger(name: string, fallback: number): number {

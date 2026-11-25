@@ -10,7 +10,11 @@ import {
 } from './approval.types';
 import { Decision, PendingDecisionView } from '../decisions/decision.types';
 import { MockActor } from '../mock/actor.types';
-import { ASSIGNMENT_REPOSITORY, ApproverAssignmentRepository } from '../mock/approver-assignment.repository';
+import {
+  ASSIGNMENT_REPOSITORY,
+  ApproverAssignmentRepository,
+  ApproverMapping,
+} from '../mock/approver-assignment.repository';
 import { CLOCK, Clock } from '../shared/clock';
 import { APPROVAL_POLICY, ApprovalPolicy } from '../shared/approval-policy';
 import { ApprovalConfigService } from '../shared/config';
@@ -52,6 +56,7 @@ export class ApprovalLifecycleService {
     if (active !== undefined) {
       throw conflictError('Active approval already exists for lead');
     }
+    const mapping = await this.requireMapping(input.productVertical);
     await this.assignments.saveLeadAssignment({
       leadId: input.leadId,
       creatorId: input.creatorId,
@@ -59,10 +64,6 @@ export class ApprovalLifecycleService {
       teamId: input.teamId,
       territoryId: input.territoryId,
     });
-    const mapping = await this.assignments.getMapping(input.productVertical);
-    if (mapping === undefined) {
-      throw conflictError('Approver mapping unavailable');
-    }
     return this.createApproval(input, mapping.pnlHeadId, mapping.salesManagerId);
   }
 
@@ -275,10 +276,7 @@ export class ApprovalLifecycleService {
     ) {
       return approval;
     }
-    const mapping = await this.assignments.getMapping(approval.productVertical);
-    if (mapping === undefined) {
-      throw mappingMissingError(`No approver mapping for ${approval.productVertical}`);
-    }
+    const mapping = await this.requireMapping(approval.productVertical);
     const now = this.clock.now();
     const transferred: ApprovalRequest = {
       ...approval,
@@ -425,5 +423,13 @@ export class ApprovalLifecycleService {
       expiresAt: approval.expiresAt,
       submittedAt: approval.submittedAt,
     };
+  }
+
+  private async requireMapping(productVertical: string): Promise<ApproverMapping> {
+    const mapping = await this.assignments.getMapping(productVertical);
+    if (mapping === undefined) {
+      throw mappingMissingError(`No approver mapping for ${productVertical}`);
+    }
+    return mapping;
   }
 }
